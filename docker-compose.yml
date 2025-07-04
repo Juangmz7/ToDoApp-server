@@ -14,7 +14,7 @@ services:
       POSTGRES_PASSWORD: jugoba389320
       POSTGRES_DB: ToDoApp
     ports:
-      - 5432:5432
+      - 5433:5432
     networks:
       - my-network
 
