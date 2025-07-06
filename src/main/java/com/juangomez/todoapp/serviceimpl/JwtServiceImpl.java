@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -18,10 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Service
 public class JwtServiceImpl implements JwtService {
 
-    // Secret and encoded key
     private final String secretKey;
+    private long JWT_EXPIRATION = 1000*60*3;
+
 
     public JwtServiceImpl() { secretKey = generateSecretKey(); }
 
@@ -33,7 +36,6 @@ public class JwtServiceImpl implements JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    @Override
     public String generateSecretKey() {
         try {
             KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
@@ -41,7 +43,7 @@ public class JwtServiceImpl implements JwtService {
             System.out.println("Secret key generated: " + key );
             return Base64.getEncoder().encodeToString(key.getEncoded());
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error generating secret key: " + e);
         }
     }
 
@@ -54,7 +56,7 @@ public class JwtServiceImpl implements JwtService {
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 // 30 minutes for token expiration
-                .expiration( new Date(System.currentTimeMillis() + 1000*60*30 ) )
+                .expiration( new Date(System.currentTimeMillis() + JWT_EXPIRATION ) )
                 .compact();
     }
 
@@ -66,20 +68,18 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public boolean validateToken(String token, UserDetails userDetails) {
         String tokenUsername = extractUsername(token);
-        return userDetails.getUsername().equals(tokenUsername) && isNotExpired(token);
+        return userDetails.getUsername().equals(tokenUsername) && !isTokenExpired(token);
     }
 
     /**
      * Extracts from the token the claim indicated in claimResolver
      */
     private <T> T extractClaim(String token, Function<Claims, T> claimResolver) {
-        Claims claims = extractAllClaims(token);
+        final Claims claims = extractAllClaims(token);
         return claimResolver.apply(claims);
     }
 
-    /**
-     *  Takes all token claims
-     */
+
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(getKey())
@@ -89,7 +89,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     // Verifies token expiration
-    private boolean isNotExpired(String token) {
-        return extractClaim(token, Claims::getExpiration).before(new Date(System.currentTimeMillis()));
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date(System.currentTimeMillis()));
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 }
