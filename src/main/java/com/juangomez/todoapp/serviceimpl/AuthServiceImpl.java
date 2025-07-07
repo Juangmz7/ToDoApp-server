@@ -43,45 +43,32 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public ResponseEntity<String> login(LoginRequest request) {
-        try {
-            // User authentication with username & password
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
-                            request.getPassword()
-                    )
-            );
+    public String login(LoginRequest request) {
 
-            // Token generation if the authentication succeeded
-            String jwt = jwtService.generateToken(request.getUsername());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getUsername(),
+                        request.getPassword()
+                )
+        );
 
-            return ResponseEntity.ok(jwt);
-        }
-        catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Invalid username or password");
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred: " + e.getMessage());
-        }
+        return jwtService.generateToken(request.getUsername());
     }
 
     @Override
     public UserResponse register(UserRegisterRequest registerRequest) throws RoleNotFoundException {
         // Validations for registerRequest
         if (registerRequest == null) {
-            throw new InvalidUserException("Invalid user");
+            throw new InvalidUserException("Registration request cannot be null");
         }
         if (registerRequest.getUserName() == null || registerRequest.getUserName().trim().isEmpty()) {
             throw new InvalidUsernameException("Invalid username");
         }
         if (registerRequest.getPassword() == null || registerRequest.getPassword().length() < 8) {
-            throw new InvalidPasswordException("Invalid password");
+            throw new InvalidPasswordException("Password at least must have 8 characters");
         }
         if (!EmailValidator.getInstance().isValid(registerRequest.getEmail())) {
-            throw new InvalidEmailException("Invalid email");
+            throw new InvalidEmailException("Invalid email format");
         }
 
         // Verify if the user already exists
@@ -113,12 +100,10 @@ public class AuthServiceImpl implements AuthService {
         // Save user in db
         userRepository.save(user);
 
-        UserResponse userResponse = new UserResponse(
+        return new UserResponse(
                 user.getUserName(),
                 user.getPassword(),
                 user.getEmail()
         );
-
-        return userResponse;
     }
 }
