@@ -6,9 +6,11 @@ import com.juangomez.todoapp.dto.UserResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.RoleNotFoundException;
+
 @Service
-public interface UserService {
+public interface AuthService {
     ResponseEntity<String> login (LoginRequest user);
 
-    ResponseEntity<UserResponse> register(UserRegisterRequest user);
+    UserResponse register(UserRegisterRequest user) throws RoleNotFoundException;
 }
