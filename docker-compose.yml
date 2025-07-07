@@ -2,10 +2,17 @@
 services:
   app:
     build: .
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/ToDoApp # Intern URL connection
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
     ports:
       - "8081:8081"
+    depends_on:
+      - postgres
     networks:
       - my-network
+
 
   postgres:
     image: postgres:latest
