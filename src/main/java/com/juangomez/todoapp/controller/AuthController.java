@@ -18,6 +18,7 @@ import javax.management.relation.RoleNotFoundException;
 import java.util.List;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
