@@ -2,7 +2,7 @@ package com.juangomez.todoapp.serviceimpl;
 
 import com.juangomez.todoapp.service.JwtService;
 import com.juangomez.todoapp.service.UserService;
-import dto.LoginRequest;
+import com.juangomez.todoapp.dto.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -3,7 +3,7 @@ package com.juangomez.todoapp.controller;
 import com.juangomez.todoapp.model.User;
 import com.juangomez.todoapp.repository.UserRepository;
 import com.juangomez.todoapp.service.UserService;
-import dto.LoginRequest;
+import com.juangomez.todoapp.dto.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

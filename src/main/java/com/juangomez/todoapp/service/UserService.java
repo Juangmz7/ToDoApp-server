@@ -1,6 +1,6 @@
 package com.juangomez.todoapp.service;
 
-import dto.LoginRequest;
+import com.juangomez.todoapp.dto.LoginRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
