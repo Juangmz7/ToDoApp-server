@@ -1,5 +1,9 @@
 package com.juangomez.todoapp.serviceimpl;
 
+import com.juangomez.todoapp.dto.UserRegisterRequest;
+import com.juangomez.todoapp.dto.UserResponse;
+import com.juangomez.todoapp.model.User;
+import com.juangomez.todoapp.repository.UserRepository;
 import com.juangomez.todoapp.service.JwtService;
 import com.juangomez.todoapp.service.UserService;
 import com.juangomez.todoapp.dto.LoginRequest;
@@ -12,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -19,10 +25,13 @@ public class UserServiceImpl implements UserService {
     private JwtService jwtService;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Override
-    public ResponseEntity<String> login(LoginRequest request) {
+    public String login(LoginRequest request) {
         try {
             // User authentication with username & password
             Authentication authentication = authenticationManager.authenticate(
@@ -46,4 +55,15 @@ public class UserServiceImpl implements UserService {
                     .body("An error occurred: " + e.getMessage());
         }
     }
+
+    @Override
+    public UserResponse register(UserRegisterRequest registerRequest) {
+        if (registerRequest == null) {
+        }
+        if (registerRequest.getUserName() == null || registerRequest.getUserName().trim().isEmpty()) {
+        }
+        if (registerRequest.getPassword() == null || registerRequest.getPassword().length() < 8) {
+        }
+
+
 }
