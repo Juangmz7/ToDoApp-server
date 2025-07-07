@@ -23,6 +23,8 @@ public class SecurityConfig {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    public static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
+
     /**
      * Modifies the security filters
      * Allows public access to "login" and "register"
