@@ -18,7 +18,7 @@ public class Task {
     private Integer id;
     private String body;
     private boolean isCompleted;
-    private Date releaseDate;
+    private LocalDate taskDate;
 
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;
