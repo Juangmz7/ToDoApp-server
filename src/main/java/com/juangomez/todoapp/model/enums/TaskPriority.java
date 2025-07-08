@@ -1,8 +1,8 @@
 package com.juangomez.todoapp.model.enums;
 
 public enum TaskPriority {
-    URGENT,
-    HIGH,
+    LOW,
     MEDIUM,
-    LOW
+    HIGH,
+    URGENT
 }
