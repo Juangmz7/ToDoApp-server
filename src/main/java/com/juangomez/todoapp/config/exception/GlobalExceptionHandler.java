@@ -1,9 +1,12 @@
 package com.juangomez.todoapp.config.exception;
 
 
-import com.juangomez.todoapp.config.exception.authentication.*;
+import com.juangomez.todoapp.config.exception.task.InvalidTaskIdException;
+import com.juangomez.todoapp.config.exception.task.TaskNotFoundException;
+import com.juangomez.todoapp.config.exception.user.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,87 +15,47 @@ import org.springframework.web.context.request.WebRequest;
 @ControllerAdvice
 public class GlobalExceptionHandler extends RuntimeException{
 
-    @ExceptionHandler(DuplicateUsernameException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateUsernameException(
-            DuplicateUsernameException exception,
-            WebRequest request
+    // Helper method to create an ErrorResponse
+    private ResponseEntity<ErrorResponse> createErrorResponseEntity(
+            RuntimeException exception,
+            WebRequest request,
+            HttpStatus status
     ) {
         ErrorResponse error = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                status.value(),
+                status.getReasonPhrase(),
                 exception.getMessage(),
                 request.getDescription(false)
         );
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(error, status);
     }
 
-    @ExceptionHandler(InvalidEmailException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidEmailException(
-            InvalidEmailException exception,
-            WebRequest request
-    ) {
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                exception.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler({
+            DuplicateUsernameException.class,
+            InvalidEmailException.class,
+            InvalidPasswordException.class,
+            InvalidUsernameException.class,
+            InvalidUserException.class,
+            BadCredentialsException.class,
+            InvalidTaskIdException.class,
+    })
+    public ResponseEntity<ErrorResponse> handleBadRequestException(RuntimeException exception, WebRequest request) {
+       return createErrorResponseEntity(exception, request, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(InvalidPasswordException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidPasswordException(
-            InvalidPasswordException exception,
-            WebRequest request
-    ) {
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                exception.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler({
+            AccessDeniedException.class,
+            IllegalStateException.class,
+    })
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(RuntimeException exception, WebRequest request) {
+        return createErrorResponseEntity(exception, request, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(InvalidUsernameException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidUsernameException(
-            InvalidUsernameException exception,
-            WebRequest request
-    ) {
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                exception.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler({
+            TaskNotFoundException.class
+    })
+    public ResponseEntity<ErrorResponse> handleNotFoundException(RuntimeException exception, WebRequest request) {
+        return createErrorResponseEntity(exception, request, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(InvalidUserException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidUserException(
-            InvalidUserException exception,
-            WebRequest request
-    ) {
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                exception.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidUserException(
-            BadCredentialsException exception,
-            WebRequest request
-    ) {
-        ErrorResponse error = new ErrorResponse(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                exception.getMessage(),
-                request.getDescription(false)
-        );
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
-    }
 }
