@@ -10,18 +10,18 @@ import java.util.stream.Collectors;
 public class UserPrincipal implements UserDetails {
 
     private User user;
+    Collection<? extends GrantedAuthority> authorities;
 
-    public UserPrincipal(User user) {
+
+    public UserPrincipal(User user, Collection<? extends GrantedAuthority> authorities) {
         this.user = user;
+        this.authorities = authorities;
     }
 
     // For each role in user creates a SimpleGrantedAuthority
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return user.getRoles()
-                .stream()
-                .map( role -> new SimpleGrantedAuthority(role.getName()) )
-                .collect(Collectors.toSet()); // Stream to set
+        return authorities;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUserName();
+        return user.getUsername();
     }
 
     @Override
