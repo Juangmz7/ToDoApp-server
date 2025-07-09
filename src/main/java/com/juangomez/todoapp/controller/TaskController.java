@@ -65,15 +65,10 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    // uncompleted -> completed = false
     @GetMapping("/completed")
-    public ResponseEntity<List<TaskResponse>> getCompletedTasks() {
-        List<TaskResponse> tasks = taskService.getCompletedTasks();
-        return ResponseEntity.ok(tasks);
-    }
-
-    @GetMapping("/uncompleted")
-    public ResponseEntity<List<TaskResponse>> getUncompletedTasks() {
-        List<TaskResponse> tasks = taskService.getUncompletedTasks();
+    public ResponseEntity<List<TaskResponse>> getCompletedTasks(@RequestParam boolean completed) {
+        List<TaskResponse> tasks = taskService.getCompletedTasks(completed);
         return ResponseEntity.ok(tasks);
     }
 
@@ -89,11 +84,11 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @GetMapping("/by-date-order-by-date-desc")
-    public ResponseEntity<List<TaskResponse>> getTasksByDateOrderByDateDescending(
-           @NotNull @DateTimeFormat(pattern = "yyyy/MM/dd") @RequestParam LocalDate date
+    @GetMapping("/by-date-order-by-priority-asc")
+    public ResponseEntity<List<TaskResponse>> getTasksByDateOrderByPriorityAscending(
+            @NotNull @DateTimeFormat(pattern = "yyyy/MM/dd") @RequestParam LocalDate date
     ) {
-        List<TaskResponse> tasks = taskService.getTasksByDateOrderByDateDescending(date);
+        List<TaskResponse> tasks = taskService.getTasksByDateOrderByPriorityAscending(date);
         return ResponseEntity.ok(tasks);
     }
 

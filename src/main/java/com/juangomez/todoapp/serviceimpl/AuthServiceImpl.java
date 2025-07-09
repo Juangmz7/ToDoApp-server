@@ -1,7 +1,7 @@
 package com.juangomez.todoapp.serviceimpl;
 
 import com.juangomez.todoapp.config.SecurityConfig;
-import com.juangomez.todoapp.config.exception.authentication.*;
+import com.juangomez.todoapp.config.exception.user.*;
 import com.juangomez.todoapp.dto.UserRegisterRequest;
 import com.juangomez.todoapp.dto.UserResponse;
 import com.juangomez.todoapp.model.Role;
@@ -14,10 +14,7 @@ import com.juangomez.todoapp.service.AuthService;
 import com.juangomez.todoapp.dto.LoginRequest;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -61,24 +58,24 @@ public class AuthServiceImpl implements AuthService {
         if (registerRequest == null) {
             throw new InvalidUserException("Registration request cannot be null");
         }
-        if (registerRequest.getUserName() == null || registerRequest.getUserName().trim().isEmpty()) {
+        if (registerRequest.getUsername() == null || registerRequest.getUsername().trim().isEmpty()) {
             throw new InvalidUsernameException("Invalid username");
         }
         if (registerRequest.getPassword() == null || registerRequest.getPassword().length() < 8) {
-            throw new InvalidPasswordException("Password at least must have 8 characters");
+            throw new InvalidPasswordException("Password must have at least 8 characters");
         }
         if (!EmailValidator.getInstance().isValid(registerRequest.getEmail())) {
             throw new InvalidEmailException("Invalid email format");
         }
 
         // Verify if the user already exists
-        if (userRepository.existsByUserName(registerRequest.getUserName())) {
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new DuplicateUsernameException("Username already exists");
         }
 
         // New user registration
         User user = new User();
-        user.setUserName(registerRequest.getUserName());
+        user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());
 
         // Password hashed
@@ -101,7 +98,8 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
 
         return new UserResponse(
-                user.getUserName(),
+                user.getId(),
+                user.getUsername(),
                 user.getPassword(),
                 user.getEmail()
         );
