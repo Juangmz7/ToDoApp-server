@@ -21,19 +21,18 @@ spring:
       platform: postgres
 
   ai:
-    model:
-      embedding: ollama
-    ollama:
+    openai:
+      api-key: ${API_KEY}
       embedding:
         options:
-          model: mxbai-embed-large
+          model: text-embedding-3-small
 
-#    vectorstore:
-#      pgvector:
-#        index-type: HNSW
-#        distance-type: COSINE_DISTANCE
-#        dimensions: 1536
-#        max-document-batch-size: 10000
+    vectorstore:
+      pgvector:
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        dimensions: 1536
+        max-document-batch-size: 10000
 
   main:
     allow-bean-definition-overriding: true
