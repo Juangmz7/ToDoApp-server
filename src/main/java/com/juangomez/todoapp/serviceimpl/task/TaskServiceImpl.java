@@ -2,7 +2,6 @@ package com.juangomez.todoapp.serviceimpl.task;
 
 import com.juangomez.todoapp.ai.service.VectorStoreService;
 import com.juangomez.todoapp.config.exception.task.TaskNotFoundException;
-import com.juangomez.todoapp.dto.DocumentInput;
 import com.juangomez.todoapp.dto.TaskRequest;
 import com.juangomez.todoapp.dto.TaskResponse;
 import com.juangomez.todoapp.model.Task;
@@ -148,9 +147,7 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.save(task);
         // Save in vectorStore
         vectorStoreService.addVectorStore(
-                List.of(
-                        new DocumentInput(task.getId(), task.getBody())
-                )
+                List.of(task)
         );
 
         return entityToResponse(task);
@@ -185,11 +182,7 @@ public class TaskServiceImpl implements TaskService {
         if (changed) {
             Task updatedTask = taskRepository.save(task);
             // Update the VectorStore
-            vectorStoreService.updateVectorStore(
-                    List.of(
-                            new DocumentInput(task.getId(), task.getBody())
-                    )
-            );
+            vectorStoreService.updateVectorStore(task);
             return entityToResponse(updatedTask);
         }
 
@@ -206,13 +199,14 @@ public class TaskServiceImpl implements TaskService {
                 ));
         taskRepository.deleteById(id);
         // Also delete from VectorStore
-        vectorStoreService.deleteVectorStore(List.of(id));
+        vectorStoreService.deleteVectorStore(id);
         return true;
     }
 
     @Override
     public List<TaskResponse> getSimilarTasks(String body) {
-        List<Integer> tasksId = vectorStoreService.similaritySearch(body);
+        String username = getCurrentUsername();
+        List<Integer> tasksId = vectorStoreService.similaritySearch(body, username);
 
         if (tasksId.isEmpty())
             return List.of();

@@ -1,7 +1,6 @@
 package com.juangomez.todoapp.config;
 
 import org.springframework.ai.embedding.EmbeddingModel;
-import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.pgvector.PgVectorStore;
@@ -72,20 +71,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
-    }
-
-    @Bean
-    public VectorStore vectorStore(
-            EmbeddingModel embeddingModel,
-            JdbcTemplate jdbcTemplate
-    ) {
-
-        return PgVectorStore
-                .builder(jdbcTemplate, embeddingModel)
-                .dimensions(1536)
-                .distanceType(PgVectorStore.PgDistanceType.COSINE_DISTANCE)
-                .indexType(PgVectorStore.PgIndexType.HNSW)
-                .build();
     }
 
 }

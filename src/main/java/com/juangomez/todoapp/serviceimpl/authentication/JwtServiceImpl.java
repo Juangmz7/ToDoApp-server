@@ -23,8 +23,6 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService {
 
     private final String secretKey;
-    private long JWT_EXPIRATION = 1000*60*3;
-
 
     public JwtServiceImpl() { secretKey = generateSecretKey(); }
 
@@ -50,13 +48,14 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
+        long JWT_EXPIRATION = 1000 * 60 * 30;
         return Jwts.builder()
                 .claims(claims)
                 .subject(username)
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 // 30 minutes for token expiration
-                .expiration( new Date(System.currentTimeMillis() + JWT_EXPIRATION ) )
+                .expiration( new Date(System.currentTimeMillis() + JWT_EXPIRATION) )
                 .compact();
     }
 
