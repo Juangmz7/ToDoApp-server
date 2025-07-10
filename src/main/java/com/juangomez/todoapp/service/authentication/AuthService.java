@@ -1,4 +1,4 @@
-package com.juangomez.todoapp.service;
+package com.juangomez.todoapp.service.authentication;
 
 import com.juangomez.todoapp.dto.LoginRequest;
 import com.juangomez.todoapp.dto.UserRegisterRequest;

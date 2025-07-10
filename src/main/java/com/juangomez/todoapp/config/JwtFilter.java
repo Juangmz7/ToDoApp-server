@@ -1,8 +1,8 @@
 package com.juangomez.todoapp.config;
 
 
-import com.juangomez.todoapp.service.JwtService;
-import com.juangomez.todoapp.serviceimpl.MyUserDetailsService;
+import com.juangomez.todoapp.service.authentication.JwtService;
+import com.juangomez.todoapp.serviceimpl.user.MyUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

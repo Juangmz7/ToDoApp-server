@@ -1,8 +1,8 @@
-package com.juangomez.todoapp.serviceimpl;
+package com.juangomez.todoapp.serviceimpl.task;
 
-import com.juangomez.todoapp.config.exception.task.InvalidTaskBodyException;
-import com.juangomez.todoapp.config.exception.task.InvalidTaskPriorityException;
+import com.juangomez.todoapp.ai.service.VectorStoreService;
 import com.juangomez.todoapp.config.exception.task.TaskNotFoundException;
+import com.juangomez.todoapp.dto.DocumentInput;
 import com.juangomez.todoapp.dto.TaskRequest;
 import com.juangomez.todoapp.dto.TaskResponse;
 import com.juangomez.todoapp.model.Task;
@@ -11,7 +11,7 @@ import com.juangomez.todoapp.model.UserPrincipal;
 import com.juangomez.todoapp.model.enums.TaskPriority;
 import com.juangomez.todoapp.repository.TaskRepository;
 import com.juangomez.todoapp.repository.UserRepository;
-import com.juangomez.todoapp.service.TaskService;
+import com.juangomez.todoapp.service.task.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -27,8 +27,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private VectorStoreService vectorStoreService;
 
     // Helper Task -> TaskResponse
     private TaskResponse entityToResponse(Task task) {
@@ -142,6 +146,12 @@ public class TaskServiceImpl implements TaskService {
         task.setCompleted(taskRequest.isCompleted());
 
         taskRepository.save(task);
+        // Save in vectorStore
+        vectorStoreService.addVectorStore(
+                List.of(
+                        new DocumentInput(task.getId(), task.getBody())
+                )
+        );
 
         return entityToResponse(task);
     }
@@ -174,6 +184,12 @@ public class TaskServiceImpl implements TaskService {
         // Save the modification
         if (changed) {
             Task updatedTask = taskRepository.save(task);
+            // Update the VectorStore
+            vectorStoreService.updateVectorStore(
+                    List.of(
+                            new DocumentInput(task.getId(), task.getBody())
+                    )
+            );
             return entityToResponse(updatedTask);
         }
 
@@ -189,6 +205,19 @@ public class TaskServiceImpl implements TaskService {
                         "Task with id: " + id + " is not found"
                 ));
         taskRepository.deleteById(id);
+        // Also delete from VectorStore
+        vectorStoreService.deleteVectorStore(List.of(id));
         return true;
+    }
+
+    @Override
+    public List<TaskResponse> getSimilarTasks(String body) {
+        List<Integer> tasksId = vectorStoreService.similaritySearch(body);
+
+        if (tasksId.isEmpty())
+            return List.of();
+
+        List<Task> tasks = taskRepository.findAllById(tasksId);
+        return entityListToResponse(tasks);
     }
 }

@@ -20,5 +20,27 @@ spring:
       mode: always
       platform: postgres
 
+  ai:
+    model:
+      embedding: ollama
+    ollama:
+      embedding:
+        options:
+          model: mxbai-embed-large
+
+#    vectorstore:
+#      pgvector:
+#        index-type: HNSW
+#        distance-type: COSINE_DISTANCE
+#        dimensions: 1536
+#        max-document-batch-size: 10000
+
+  main:
+    allow-bean-definition-overriding: true
+
 server:
   port: 8081
+logging:
+    level:
+      org.springframework.ai: DEBUG
+      org.springframework.web.client.RestTemplate: DEBUG

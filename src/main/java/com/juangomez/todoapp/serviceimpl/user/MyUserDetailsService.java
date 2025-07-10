@@ -1,4 +1,4 @@
-package com.juangomez.todoapp.serviceimpl;
+package com.juangomez.todoapp.serviceimpl.user;
 
 import com.juangomez.todoapp.model.User;
 import com.juangomez.todoapp.model.UserPrincipal;

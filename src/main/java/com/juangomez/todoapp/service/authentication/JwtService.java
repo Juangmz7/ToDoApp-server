@@ -1,4 +1,4 @@
-package com.juangomez.todoapp.service;
+package com.juangomez.todoapp.service.authentication;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

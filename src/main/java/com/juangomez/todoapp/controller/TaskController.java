@@ -3,11 +3,14 @@ package com.juangomez.todoapp.controller;
 import com.juangomez.todoapp.dto.TaskRequest;
 import com.juangomez.todoapp.dto.TaskResponse;
 import com.juangomez.todoapp.model.enums.TaskPriority;
-import com.juangomez.todoapp.service.TaskService;
+import com.juangomez.todoapp.service.task.TaskService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.ollama.OllamaEmbeddingModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -34,7 +37,6 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    ///  Future AI implementation
     @GetMapping("/search")
     public ResponseEntity<TaskResponse> getTaskByBody(
             @NotBlank(message = "Body task must not be empty") @RequestParam String body
@@ -42,6 +44,7 @@ public class TaskController {
         TaskResponse task = taskService.getTaskByBody(body);
         return ResponseEntity.ok(task);
     }
+
 
     @GetMapping
     public ResponseEntity<List<TaskResponse>> getAllTasks() {
@@ -124,4 +127,12 @@ public class TaskController {
                 .body(taskCreated);
     }
 
+    @GetMapping("/search-by-similarities")
+    public ResponseEntity<List<TaskResponse>> getSimilarTasks(
+            @NotBlank(message = "Body task must not be empty")@RequestParam String body
+    ) {
+//        System.out.println(">>> EmbeddingClient: " + embeddingClient.getClass());
+        List<TaskResponse> task = taskService.getSimilarTasks(body);
+        return ResponseEntity.ok(task);
+    }
 }

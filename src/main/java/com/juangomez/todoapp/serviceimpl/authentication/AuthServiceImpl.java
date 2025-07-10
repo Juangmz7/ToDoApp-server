@@ -1,4 +1,4 @@
-package com.juangomez.todoapp.serviceimpl;
+package com.juangomez.todoapp.serviceimpl.authentication;
 
 import com.juangomez.todoapp.config.SecurityConfig;
 import com.juangomez.todoapp.config.exception.user.*;
@@ -9,8 +9,8 @@ import com.juangomez.todoapp.model.User;
 import com.juangomez.todoapp.model.enums.RoleName;
 import com.juangomez.todoapp.repository.RoleRepository;
 import com.juangomez.todoapp.repository.UserRepository;
-import com.juangomez.todoapp.service.JwtService;
-import com.juangomez.todoapp.service.AuthService;
+import com.juangomez.todoapp.service.authentication.JwtService;
+import com.juangomez.todoapp.service.authentication.AuthService;
 import com.juangomez.todoapp.dto.LoginRequest;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;

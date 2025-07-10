@@ -1,8 +1,9 @@
-package com.juangomez.todoapp.service;
+package com.juangomez.todoapp.service.task;
 
 import com.juangomez.todoapp.dto.TaskRequest;
 import com.juangomez.todoapp.dto.TaskResponse;
 import com.juangomez.todoapp.model.enums.TaskPriority;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -34,4 +35,6 @@ public interface TaskService {
     TaskResponse updateTask(Integer id, TaskRequest taskRequest);
 
     boolean deleteTask(Integer id);
+
+    List<TaskResponse> getSimilarTasks(String body);
 }

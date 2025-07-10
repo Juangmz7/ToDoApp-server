@@ -4,7 +4,7 @@ import com.juangomez.todoapp.dto.UserRegisterRequest;
 import com.juangomez.todoapp.dto.UserResponse;
 import com.juangomez.todoapp.model.User;
 import com.juangomez.todoapp.repository.UserRepository;
-import com.juangomez.todoapp.service.AuthService;
+import com.juangomez.todoapp.service.authentication.AuthService;
 import com.juangomez.todoapp.dto.LoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

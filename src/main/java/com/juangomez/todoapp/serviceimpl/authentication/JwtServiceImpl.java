@@ -1,6 +1,6 @@
-package com.juangomez.todoapp.serviceimpl;
+package com.juangomez.todoapp.serviceimpl.authentication;
 
-import com.juangomez.todoapp.service.JwtService;
+import com.juangomez.todoapp.service.authentication.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
