@@ -23,6 +23,9 @@ spring:
   ai:
     openai:
       api-key: ${API_KEY}
+      chat:
+        options:
+          model: gpt-3.5-turbo
       embedding:
         options:
           model: text-embedding-3-small
