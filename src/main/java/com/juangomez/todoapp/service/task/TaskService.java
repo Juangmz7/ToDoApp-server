@@ -5,6 +5,7 @@ import com.juangomez.todoapp.dto.TaskResponse;
 import com.juangomez.todoapp.model.enums.TaskPriority;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,4 +38,6 @@ public interface TaskService {
     boolean deleteTask(Integer id);
 
     List<TaskResponse> getSimilarTasks(String body);
+
+    TaskResponse createTaskByAudio(MultipartFile file);
 }

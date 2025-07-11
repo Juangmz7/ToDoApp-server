@@ -1,6 +1,9 @@
 package com.juangomez.todoapp.serviceimpl.task;
 
+import com.juangomez.todoapp.ai.service.TaskGenService;
 import com.juangomez.todoapp.ai.service.VectorStoreService;
+import com.juangomez.todoapp.config.exception.task.InvalidAudioFormatException;
+import com.juangomez.todoapp.config.exception.task.NullDateException;
 import com.juangomez.todoapp.config.exception.task.TaskNotFoundException;
 import com.juangomez.todoapp.dto.TaskRequest;
 import com.juangomez.todoapp.dto.TaskResponse;
@@ -16,6 +19,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -32,6 +36,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private VectorStoreService vectorStoreService;
+
+    @Autowired
+    private TaskGenService taskGenService;
 
     // Helper Task -> TaskResponse
     private TaskResponse entityToResponse(Task task) {
@@ -132,6 +139,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponse createTask(TaskRequest taskRequest) {
+        if (taskRequest.getTaskDate() == null)
+            throw new NullDateException("Date must not be a empty field");
+
         String username = getCurrentUsername();
         // Fetch who creates the task
         User user = userRepository.findByUsername(username);
@@ -155,6 +165,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskResponse updateTask(Integer id, TaskRequest taskRequest) {
+
+        if (taskRequest.getTaskDate() == null)
+            throw new NullDateException("Date must not be a empty field");
+
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(
                         "Task with id: " + id + " is not found"
@@ -213,5 +227,28 @@ public class TaskServiceImpl implements TaskService {
 
         List<Task> tasks = taskRepository.findAllById(tasksId);
         return entityListToResponse(tasks);
+    }
+
+    @Override
+    public TaskResponse createTaskByAudio(MultipartFile file) {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("audio/")) {
+            throw new InvalidAudioFormatException("The audio must not be null");
+        }
+        String username = getCurrentUsername();
+        TaskRequest taskRequest = taskGenService.taskRequestGenator(file);
+
+        Task task = new Task();
+        task.setBody(taskRequest.getBody());
+        task.setPriority(taskRequest.getPriority());
+        task.setTaskDate(taskRequest.getTaskDate());
+        task.setCompleted(taskRequest.isCompleted());
+
+        // Find the user
+        User user = userRepository.findByUsername(username);
+        task.setUser(user);
+        Task createdTask = taskRepository.save(task);
+
+        return entityToResponse(createdTask);
     }
 }
