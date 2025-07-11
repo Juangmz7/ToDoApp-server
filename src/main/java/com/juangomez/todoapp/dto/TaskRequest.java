@@ -23,8 +23,8 @@ public class TaskRequest {
     @NotNull(message = "Priority task must not be null")
     private TaskPriority priority;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate taskDate;
 
 }
