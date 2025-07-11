@@ -2,6 +2,7 @@ package com.juangomez.todoapp.config.exception;
 
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.juangomez.todoapp.config.exception.task.InvalidAudioFormatException;
 import com.juangomez.todoapp.config.exception.task.InvalidTaskBodyException;
 import com.juangomez.todoapp.config.exception.task.InvalidTaskPriorityException;
 import com.juangomez.todoapp.config.exception.task.TaskNotFoundException;
