@@ -17,11 +17,14 @@ public class TaskRequest {
 
     @NotBlank(message = "Body task must not be empty")
     private String body;
-    private boolean isCompleted;
+
+    private boolean completed;
+
     @NotNull(message = "Priority task must not be null")
     private TaskPriority priority;
 
-    @NotNull(message = "Date task must not be null")
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull
     private LocalDate taskDate;
+
 }
