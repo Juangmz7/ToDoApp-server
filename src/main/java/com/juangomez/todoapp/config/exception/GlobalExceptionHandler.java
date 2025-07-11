@@ -50,7 +50,8 @@ public class GlobalExceptionHandler {
             MethodArgumentNotValidException.class,      // Json body validation
             ConstraintViolationException.class,         // Request parameters validation
             MethodArgumentTypeMismatchException.class,   // When cannot convert a request parameter to object
-            MissingServletRequestParameterException.class
+            MissingServletRequestParameterException.class,
+            InvalidAudioFormatException.class
     })
     public ResponseEntity<ErrorResponse> handleBadRequestException(RuntimeException exception, WebRequest request) {
        return createErrorResponseEntity(exception, request, HttpStatus.BAD_REQUEST);
