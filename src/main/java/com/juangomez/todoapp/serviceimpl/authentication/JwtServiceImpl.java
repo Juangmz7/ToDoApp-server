@@ -70,6 +70,25 @@ public class JwtServiceImpl implements JwtService {
         return userDetails.getUsername().equals(tokenUsername) && !isTokenExpired(token);
     }
 
+    @Override
+    public String extractAuthToken() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // Not authenticated
+        if (authentication == null) {
+            return null;
+        }
+
+        // The credentials are the token
+        Object credentials = authentication.getCredentials();
+
+        if (credentials instanceof String) {
+            return (String) credentials;
+        }
+
+        return null;
+    }
+
     /**
      * Extracts from the token the claim indicated in claimResolver
      */
