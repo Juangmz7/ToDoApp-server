@@ -140,7 +140,7 @@ public class AuthServiceImpl implements AuthService {
 
         // Send the email
         String url = "https://localhost:8081/auth/validate-reset-token?token=" + token;
-        mailService.sendForgotPasswordMail(token,"juanjuango@hotmail.com" , url);
+        mailService.sendForgotPasswordMail(token, user.getEmail(), url);
 
     }
 
