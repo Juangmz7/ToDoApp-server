@@ -1,11 +1,16 @@
 package com.juangomez.todoapp.serviceimpl.authentication;
 
 import com.juangomez.todoapp.service.authentication.JwtService;
+import com.juangomez.todoapp.service.authentication.TokenBlacklistService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +18,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +29,9 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService {
 
     private final String secretKey;
+
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
 
     public JwtServiceImpl() { secretKey = generateSecretKey(); }
 
@@ -66,27 +75,29 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean validateToken(String token, UserDetails userDetails) {
-        String tokenUsername = extractUsername(token);
-        return userDetails.getUsername().equals(tokenUsername) && !isTokenExpired(token);
+        boolean validUsername = extractUsername(token).equals(userDetails.getUsername());
+
+        // If the token has expired, or it is in the blacklist
+        boolean tokenExpired = isTokenExpired(token) || tokenBlacklistService.isTokenBlacklisted(token);
+
+        return validUsername && !tokenExpired;
     }
 
     @Override
-    public String extractAuthToken() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Not authenticated
-        if (authentication == null) {
-            return null;
+    public String extractAuthToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
         }
-
-        // The credentials are the token
-        Object credentials = authentication.getCredentials();
-
-        if (credentials instanceof String) {
-            return (String) credentials;
-        }
-
         return null;
+    }
+
+    @Override
+    public Duration tokenTtl(String token) {
+        return Duration.between(
+                new Date(System.currentTimeMillis()).toInstant(),
+                extractExpiration(token).toInstant()
+        );
     }
 
     /**
