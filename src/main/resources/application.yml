@@ -20,9 +20,14 @@ spring:
       mode: always
       platform: postgres
 
+  data:
+    redis:
+      host: redis
+      port: 6379
+
   ai:
     openai:
-      api-key: ${API_KEY}
+      api-key: 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
       chat:
         options:
           model: gpt-3.5-turbo
