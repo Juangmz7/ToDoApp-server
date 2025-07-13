@@ -251,4 +251,11 @@ public class TaskServiceImpl implements TaskService {
 
         return entityToResponse(createdTask);
     }
+
+    @Override
+    public String vectorStoreSeed() {
+        List<Task> tasks = taskRepository.findAll();
+        vectorStoreService.addVectorStore(tasks);
+        return "Succeed";
+    }
 }
