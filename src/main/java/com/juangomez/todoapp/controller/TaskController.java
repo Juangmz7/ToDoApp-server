@@ -141,4 +141,10 @@ public class TaskController {
         TaskResponse task = taskService.createTaskByAudio(file);
         return ResponseEntity.ok(task);
     }
+
+    // Vector db initialization
+    @GetMapping("/vector-seed")
+    public String vectorStoreSeed() {
+        return taskService.vectorStoreSeed();
+    }
 }
