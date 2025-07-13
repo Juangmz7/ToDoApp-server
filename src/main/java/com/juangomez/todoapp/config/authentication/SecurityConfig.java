@@ -1,4 +1,4 @@
-package com.juangomez.todoapp.config;
+package com.juangomez.todoapp.config.authentication;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,13 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/login", "/auth/register") // Authorized endpoints
+                        .requestMatchers(
+                                "/auth/login",
+                                "/auth/register",
+                                "/auth/forgot-password",
+                                "/auth/change-password",
+                                "/auth/validate-reset-token"
+                        ) // Authorized endpoints
                         .permitAll()
                         .anyRequest()
                         .authenticated()

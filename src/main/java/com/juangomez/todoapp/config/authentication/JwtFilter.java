@@ -1,4 +1,4 @@
-package com.juangomez.todoapp.config;
+package com.juangomez.todoapp.config.authentication;
 
 
 import com.juangomez.todoapp.service.authentication.JwtService;
