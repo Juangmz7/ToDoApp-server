@@ -40,4 +40,6 @@ public interface TaskService {
     List<TaskResponse> getSimilarTasks(String body);
 
     TaskResponse createTaskByAudio(MultipartFile file);
+
+    String vectorStoreSeed();
 }
