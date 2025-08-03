@@ -15,6 +15,7 @@ import com.juangomez.todoapp.service.authentication.JwtService;
 import com.juangomez.todoapp.service.authentication.AuthService;
 import com.juangomez.todoapp.dto.LoginRequest;
 import com.juangomez.todoapp.service.authentication.TokenBlacklistService;
+import com.juangomez.todoapp.serviceimpl.MailServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,6 @@ import javax.management.relation.RoleNotFoundException;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 
 @Service
@@ -81,6 +81,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Verify if the user already exists
+        //TODO: Forzar trim el username
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new DuplicateUsernameException("Username already exists");
         }
@@ -132,15 +133,14 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Create the token
-        String token = UUID.randomUUID().toString();
+        String token = MailServiceImpl.generateNumericCode(8);
 
         // To search by token or username
         tokenBlacklistService.addToken(user.getUsername(), token, Duration.ofMinutes(15));
         tokenBlacklistService.addToken(token, user.getUsername(), Duration.ofMinutes(15));
 
         // Send the email
-        String url = "https://localhost:8081/auth/validate-reset-token?token=" + token;
-        mailService.sendForgotPasswordMail(token, user.getEmail(), url);
+        mailService.sendForgotPasswordMail(token, user.getEmail());
 
     }
 
@@ -160,7 +160,7 @@ public class AuthServiceImpl implements AuthService {
 
         // If the token is in db, then it is valid
         if (!tokenBlacklistService.isTokenValid(token)) {
-            throw new IllegalStateException("The token provided is invalid or expired");
+            throw new IllegalStateException("The token provided is not valid");
         }
 
         // Verify if the token is the last one sent
@@ -179,7 +179,7 @@ public class AuthServiceImpl implements AuthService {
             This will verify it is the last generated one
         */
         if (!tokenBlacklistService.getObject(username).equals(token)) {
-            throw new IllegalStateException("The token provided is not valid");
+            throw new IllegalStateException("The token provided is expired");
         }
     }
 

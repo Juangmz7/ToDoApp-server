@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 public interface MailService {
 
     // Sends an email with a body template for forgot-password
-    void sendForgotPasswordMail(String token, String email, String url);
+    void sendForgotPasswordMail(String token, String email);
 
 }
