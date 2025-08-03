@@ -160,7 +160,7 @@ public class AuthServiceImpl implements AuthService {
 
         // If the token is in db, then it is valid
         if (!tokenBlacklistService.isTokenValid(token)) {
-            throw new IllegalStateException("The token provided is expired");
+            throw new IllegalStateException("The token provided is invalid or expired");
         }
 
         // Verify if the token is the last one sent
