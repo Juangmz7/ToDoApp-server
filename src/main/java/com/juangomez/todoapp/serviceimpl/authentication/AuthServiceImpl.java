@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
 
         // Verify if the user already exists
         //TODO: Forzar trim el username
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+        if (userRepository.existsByUsername(registerRequest.getUsername().trim())) {
             throw new DuplicateUsernameException("Username already exists");
         }
 
