@@ -26,9 +26,9 @@ spring:
       port: ${REDIS_PORT}
 
   mail:
-    host: smtp.gmail.com
+    host: ${EMAIL_HOST}
     port: 587
-    username: ${EMAIL}
+    username: juanjuangmo@gmail.com
     password: ${EMAIL_PASSWORD}
     properties:
       mail:
@@ -59,7 +59,9 @@ spring:
 
 server:
   port: 8081
+  address: 0.0.0.0
 logging:
     level:
+      org.springframework.boot.context.config: DEBUG
       org.springframework.ai: DEBUG
       org.springframework.web.client.RestTemplate: DEBUG

@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String login(LoginRequest request) {
 
-        Authentication authentication = authenticationManager.authenticate(
+        authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
@@ -81,9 +81,13 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Verify if the user already exists
-        //TODO: Forzar trim el username
+
         if (userRepository.existsByUsername(registerRequest.getUsername().trim())) {
             throw new DuplicateUsernameException("Username already exists");
+        }
+
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new DuplicateEmailException("Email is already in used");
         }
 
         // New user registration
