@@ -40,6 +40,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({
             DuplicateUsernameException.class,
+            DuplicateEmailException.class,
             InvalidEmailException.class,
             InvalidPasswordException.class,
             InvalidUsernameException.class,
