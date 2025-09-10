@@ -129,7 +129,6 @@ public class TaskController {
     public ResponseEntity<List<TaskResponse>> getSimilarTasks(
             @NotBlank(message = "Body task must not be empty")@RequestParam String body
     ) {
-//        System.out.println(">>> EmbeddingClient: " + embeddingClient.getClass());
         List<TaskResponse> task = taskService.getSimilarTasks(body);
         return ResponseEntity.ok(task);
     }
