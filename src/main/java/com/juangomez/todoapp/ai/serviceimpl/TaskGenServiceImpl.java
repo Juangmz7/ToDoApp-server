@@ -1,13 +1,12 @@
 package com.juangomez.todoapp.ai.serviceimpl;
 
 
+import com.juangomez.todoapp.ai.llmclient.LLMClient;
 import com.juangomez.todoapp.ai.provider.impl.OpenAiTranscriptionProvider;
 import com.juangomez.todoapp.ai.service.TaskGenService;
 import com.juangomez.todoapp.config.assistance.JsonAssistance;
 import com.juangomez.todoapp.dto.TaskRequest;
 import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -16,10 +15,10 @@ import java.time.LocalDate;
 
 
 @Service
-public class OpenAiTaskGenService implements TaskGenService {
+public class TaskGenServiceImpl implements TaskGenService {
 
     @Autowired
-    private OpenAiChatModel openAiChatModel;
+    private LLMClient llmClient;
 
     @Autowired
     private OpenAiTranscriptionProvider openAiTranscriptionProvider;
@@ -55,7 +54,7 @@ public class OpenAiTaskGenService implements TaskGenService {
                         Text: "%s"
                \s""".formatted(text);
         // Text to json
-        ChatResponse response = openAiChatModel.call(new Prompt(jsonPrompt));
+        ChatResponse response = llmClient.generate(jsonPrompt);
 
         // The String json contains data in json format
         String json = response.getResult().getOutput().getText();
