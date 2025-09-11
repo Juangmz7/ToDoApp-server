@@ -54,14 +54,17 @@ spring:
         dimensions: 1536
         max-document-batch-size: 10000
 
+    ollama:
+      base-url: http://ollama:11434
+      chat:
+        model: mistral
+
   main:
     allow-bean-definition-overriding: true
 
 server:
   port: 8081
-  address: 0.0.0.0
 logging:
     level:
-      org.springframework.boot.context.config: DEBUG
       org.springframework.ai: DEBUG
       org.springframework.web.client.RestTemplate: DEBUG
