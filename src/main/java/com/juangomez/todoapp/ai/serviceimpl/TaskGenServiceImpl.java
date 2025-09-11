@@ -48,7 +48,9 @@ public class TaskGenServiceImpl implements TaskGenService {
                         Only include the actions on it
                        \s
                         The first part of the audio could be a verb referred to the real body action,
-                        try to guess it and avoid including it
+                        try to guess it and avoid including it.
+                       \s
+                        Do not answer with more information than the json specified
                     \s
                        \s
                         Text: "%s"
