@@ -7,5 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public interface TaskGenService {
 
-    TaskRequest taskRequestGenator(MultipartFile file);
+    TaskRequest taskRequestGenerator(MultipartFile file);
 }

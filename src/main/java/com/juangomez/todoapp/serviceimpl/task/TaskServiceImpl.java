@@ -236,7 +236,7 @@ public class TaskServiceImpl implements TaskService {
             throw new InvalidAudioFormatException("The audio must not be null");
         }
         String username = getCurrentUsername();
-        TaskRequest taskRequest = taskGenService.taskRequestGenator(file);
+        TaskRequest taskRequest = taskGenService.taskRequestGenerator(file);
 
         Task task = new Task();
         task.setBody(taskRequest.getBody());
