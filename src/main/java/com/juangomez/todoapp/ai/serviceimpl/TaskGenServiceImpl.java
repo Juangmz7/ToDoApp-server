@@ -28,7 +28,7 @@ public class OpenAiTaskGenService implements TaskGenService {
     private JsonAssistance jsonAssistance;
 
     @Override
-    public TaskRequest taskRequestGenator(MultipartFile file) {
+    public TaskRequest taskRequestGenerator(MultipartFile file) {
         // From the file to plain text
         String text = openAiTranscriptionProvider.audioToText(file);
         String jsonPrompt = """

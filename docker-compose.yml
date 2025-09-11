@@ -1,4 +1,3 @@
-
 services:
   app:
     build: .
@@ -8,11 +7,14 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      # --- Point your app to the new Ollama container ---
+      - SPRING_AI_OLLAMA_BASE-URL=http://ollama:11434
     ports:
       - "8081:8081"
     depends_on:
       - pgvector
       - redis
+      - ollama # --- Ensure Ollama starts before your app ---
     networks:
       - my-network
 
@@ -23,7 +25,6 @@ services:
     networks:
       - my-network
 
-
   pgvector:
     image: pgvector/pgvector:pg16
     environment:
@@ -33,11 +34,25 @@ services:
     labels:
       - "org.springframework.boot.service-connection=postgres"
     ports:
-      - 5433:5432
+      - "5433:5432"
+    networks:
+      - my-network
+
+  # --- This is the full and correct Ollama service definition ---
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
     networks:
       - my-network
 
 networks:
   my-network:
     driver: bridge
+
+# --- This volume makes your Ollama models persistent ---
+volumes:
+  ollama-data:
 
