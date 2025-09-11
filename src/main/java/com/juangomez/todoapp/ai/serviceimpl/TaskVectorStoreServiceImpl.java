@@ -8,6 +8,7 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class TaskVectorStoreServiceImpl implements VectorStoreService {
 
     @Autowired
     private VectorStore vectorStore;
+
 
     /**
      * Params are not validated

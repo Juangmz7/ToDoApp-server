@@ -125,14 +125,14 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskResponse> getTasksByDateOrderByPriorityDescending(LocalDate date) {
         String username = getCurrentUsername();
-        List<Task> tasks = taskRepository.findAllByTaskDateAndUserUsernameOrderByPriorityDesc(date, username);
+        List<Task> tasks = taskRepository.findAllByTaskDateAndUserUsernameOrderByPriorityAsc(date, username);
         return entityListToResponse(tasks);
     }
 
     @Override
     public List<TaskResponse> getTasksByDateOrderByPriorityAscending(LocalDate date) {
         String username = getCurrentUsername();
-        List<Task> tasks = taskRepository.findAllByTaskDateAndUserUsernameOrderByPriorityAsc(date, username);
+        List<Task> tasks = taskRepository.findAllByTaskDateAndUserUsernameOrderByPriorityDesc(date, username);
         return entityListToResponse(tasks);
     }
 
@@ -207,7 +207,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public boolean deleteTask(Integer id) {
-        Task task = taskRepository.findById(id)
+        taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException(
                         "Task with id: " + id + " is not found"
                 ));
@@ -236,9 +236,8 @@ public class TaskServiceImpl implements TaskService {
             throw new InvalidAudioFormatException("The audio must not be null");
         }
         String username = getCurrentUsername();
-        TaskRequest taskRequest = taskGenService.taskRequestGenator(file);
+        TaskRequest taskRequest = taskGenService.taskRequestGenerator(file);
 
-        //TODO: MODIFICAR ABAJO POR createTask
         Task task = new Task();
         task.setBody(taskRequest.getBody());
         task.setPriority(taskRequest.getPriority());
