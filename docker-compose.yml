@@ -7,14 +7,14 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      # --- Point your app to the new Ollama container ---
+      # --- Point the app to the new Ollama container ---
       - SPRING_AI_OLLAMA_BASE-URL=http://ollama:11434
     ports:
       - "8081:8081"
     depends_on:
       - pgvector
       - redis
-      - ollama # --- Ensure Ollama starts before your app ---
+      - ollama
     networks:
       - my-network
 
