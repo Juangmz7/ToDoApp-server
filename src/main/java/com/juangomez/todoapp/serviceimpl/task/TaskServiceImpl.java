@@ -179,15 +179,15 @@ public class TaskServiceImpl implements TaskService {
             task.setBody(taskRequest.getBody());
             changed = true;
         }
-        if (task.isCompleted() != taskRequest.isCompleted()) { // Para booleanos primitivos
+        if (task.isCompleted() != taskRequest.isCompleted()) {
             task.setCompleted(taskRequest.isCompleted());
             changed = true;
         }
-        if (task.getPriority() != taskRequest.getPriority()) { // Para enums
+        if (task.getPriority() != taskRequest.getPriority()) {
             task.setPriority(taskRequest.getPriority());
             changed = true;
         }
-        if (!task.getTaskDate().equals(taskRequest.getTaskDate())) { // Para LocalDate
+        if (!task.getTaskDate().equals(taskRequest.getTaskDate())) {
             task.setTaskDate(taskRequest.getTaskDate());
             changed = true;
         }
