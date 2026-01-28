@@ -1,0 +1,79 @@
+name: Build and Push App image
+
+# Trigger the workflow on push or pull requests to specific branches
+on:
+  push:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ "main", "dev" ]
+    paths:
+      - 'src/**'
+      - 'pom.xml'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/**'
+
+env:
+  # Define the image name centrally for easy maintenance
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/todoapp-backend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven # Caches Maven dependencies to speed up future builds
+
+      # Run tests first. If this fails, the pipeline stops and no image is built.
+      - name: Run Tests
+        run: mvn test -f pom.xml
+
+      # Build the application JAR
+      - name: Package app
+        run: mvn package -f pom.xml -DskipTests
+
+      # Log in to Docker Hub only if this is a Push event (not a Pull Request)
+      - name: Login to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            # Tag with the branch name
+            type=ref,event=branch
+            
+            # Tag 'latest' only if we are pushing to the main branch
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+            
+            # Always tag with the commit SHA for rollback capabilities
+            type=sha,format=long
+
+      # Build the Docker image using the context of the root directory
+      - name: Build and Push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
